@@ -17,6 +17,7 @@
 		6BF155821D950B890003E5B8 /* LoopImagesUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF155811D950B890003E5B8 /* LoopImagesUITests.m */; };
 		6BF155901D950B9F0003E5B8 /* LoopImg.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6BF1558F1D950B9F0003E5B8 /* LoopImg.bundle */; };
 		6BF155941D950BDD0003E5B8 /* PP_LoopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF155931D950BDD0003E5B8 /* PP_LoopView.m */; };
+		6BFA4AE81D9816F5009385AA /* PP_LoadImageManagar.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BFA4AE71D9816F5009385AA /* PP_LoadImageManagar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		6BF1558F1D950B9F0003E5B8 /* LoopImg.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = LoopImg.bundle; sourceTree = "<group>"; };
 		6BF155921D950BDD0003E5B8 /* PP_LoopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PP_LoopView.h; sourceTree = "<group>"; };
 		6BF155931D950BDD0003E5B8 /* PP_LoopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PP_LoopView.m; sourceTree = "<group>"; };
+		6BFA4AE61D9816F5009385AA /* PP_LoadImageManagar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PP_LoadImageManagar.h; sourceTree = "<group>"; };
+		6BFA4AE71D9816F5009385AA /* PP_LoadImageManagar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PP_LoadImageManagar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +154,8 @@
 			children = (
 				6BF155921D950BDD0003E5B8 /* PP_LoopView.h */,
 				6BF155931D950BDD0003E5B8 /* PP_LoopView.m */,
+				6BFA4AE61D9816F5009385AA /* PP_LoadImageManagar.h */,
+				6BFA4AE71D9816F5009385AA /* PP_LoadImageManagar.m */,
 				6BF1558F1D950B9F0003E5B8 /* LoopImg.bundle */,
 			);
 			name = LoopView;
@@ -218,7 +223,7 @@
 		6BF155511D950B890003E5B8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "云之君兮鹏";
 				TargetAttributes = {
 					6BF155581D950B890003E5B8 = {
@@ -289,6 +294,7 @@
 			files = (
 				6BF155641D950B890003E5B8 /* ViewController.m in Sources */,
 				6BF155611D950B890003E5B8 /* AppDelegate.m in Sources */,
+				6BFA4AE81D9816F5009385AA /* PP_LoadImageManagar.m in Sources */,
 				6BF155941D950BDD0003E5B8 /* PP_LoopView.m in Sources */,
 				6BF1555E1D950B890003E5B8 /* main.m in Sources */,
 			);
@@ -358,8 +364,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -401,8 +409,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -514,6 +524,7 @@
 				6BF155881D950B890003E5B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6BF155891D950B890003E5B8 /* Build configuration list for PBXNativeTarget "LoopImagesTests" */ = {
 			isa = XCConfigurationList;
@@ -522,6 +533,7 @@
 				6BF1558B1D950B890003E5B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6BF1558C1D950B890003E5B8 /* Build configuration list for PBXNativeTarget "LoopImagesUITests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +542,7 @@
 				6BF1558E1D950B890003E5B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

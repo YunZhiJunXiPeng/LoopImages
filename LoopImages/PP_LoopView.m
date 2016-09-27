@@ -7,11 +7,13 @@
 //
 
 #import "PP_LoopView.h"
+#import "PP_LoadImageManagar.h"
 /**  宏定义 */
-#define kScreenH [UIScreen mainScreen].bounds.size.height
-#define kScreenW [UIScreen mainScreen].bounds.size.width
+#define kScreenH self.bounds.size.height
+#define kScreenW  self.bounds.size.width
 #define PPLog NSLog(@"当前的的方法名--->%s",__func__);
-
+// 弱应用
+#define PPWeakSelf(type)  __weak typeof(type) weak##type = type;
 
 @interface PP_LoopView ()
 
@@ -22,7 +24,7 @@
 @property (strong, nonatomic) NSArray<NSString *> *imageNames;// 存照片的名字数组
 @property (strong, nonatomic) UIImageView *currentImage;// 当前展示的照片
 @property (strong, nonatomic) UIImageView *nextImage; // 将要展示的照片
-
+@property (assign, nonatomic) BOOL fromNetwork; // 记录传入的是否是网址照片
 @property (strong, nonatomic) NSTimer *changeImageTime; // 定时器
 
 
@@ -40,7 +42,7 @@ typedef enum : NSUInteger
 // 获取当前下标下一个坐标
 - (NSInteger)nextIndex
 {
-    return _currentIndex == _imageNames.count - 1 ? 0 : _currentIndex + 1;
+    return _currentIndex >= _imageNames.count - 1 ? 0 : _currentIndex + 1;
 }
 // 获取当前下标的上一个坐标
 - (NSInteger)previousIndex
@@ -50,25 +52,45 @@ typedef enum : NSUInteger
 // 根据下标取到照片
 - (UIImage *)getImageForIndex:(NSInteger)index
 {
-    return [UIImage imageNamed:[NSString stringWithFormat:@"LoopImg.bundle/%@",_imageNames[index]]];
+    return [UIImage imageNamed:[NSString stringWithFormat:@"%@",_imageNames[index]]];
 }
+
+// 根据下标从网络获取图片
+- (void)getNetWorkImageIndex:(NSInteger)index imageView:(UIImageView *)image
+{
+    PPWeakSelf(image);
+    [[PP_LoadImageManagar shareImageDownManagar] getImageUrlString:_imageNames[index] delegate:nil successfulBlock:^(UIImage *returnImage) {
+        weakimage.image = returnImage;
+    }];
+}
+
+
 
 // 初始化方法
 - (instancetype)initWithImageArray:(NSArray <NSString *>*)imageArray
                               fram:(CGRect)frame
+                       fromNetWork:(BOOL)fromNetwork
 {
     if (self = [super initWithFrame:frame])
     {
+        self.clipsToBounds = YES;// 超出的范围不显示
         _imageNames = imageArray;
+        _fromNetwork = fromNetwork;
         _currentIndex = 0;
         _currentImage = [[UIImageView alloc] initWithFrame:self.bounds];
         _currentImage.userInteractionEnabled = YES;
-       // _currentImage.backgroundColor = [UIColor redColor];
-        _currentImage.image = [self getImageForIndex:_currentIndex];
+        _currentImage.contentMode = UIViewContentModeScaleToFill;
+        _currentImage.clipsToBounds = YES;
+        // 判断执行网络请求的还是直接是工程的照片
+        _fromNetwork ? [self getNetWorkImageIndex:_currentIndex imageView:_currentImage] : [_currentImage setImage:[self getImageForIndex:_currentIndex]];
+        
+        //_currentImage.image = [self getImageForIndex:_currentIndex];
         [self insertSubview:_currentImage atIndex:1];
         
         // 下一张图片
         _nextImage = [[UIImageView alloc] init];
+        _nextImage.contentMode = UIViewContentModeScaleToFill;
+        _nextImage.clipsToBounds = YES;
         _nextImage.userInteractionEnabled = YES;
         [self insertSubview:_nextImage atIndex:0];
         
@@ -105,7 +127,8 @@ typedef enum : NSUInteger
 - (void)changeActionForTime
 {
     // 设置下一张照片
-    self.nextImage.image = [self getImageForIndex:self.nextIndex];
+     _fromNetwork ? [self getNetWorkImageIndex:self.nextIndex imageView:self.nextImage] : [self.nextImage setImage:[self getImageForIndex:self.nextIndex]];
+    
     self.nextImage.frame = CGRectOffset(_currentImage.frame, kScreenW, 0);
     [self leftOut:self.currentImage rightIn:self.nextImage duration:0.5f];
     self.currentIndex = self.nextIndex;// 改变当前展示的下标
@@ -144,18 +167,18 @@ typedef enum : NSUInteger
 // 当前照片左滑动  出现右侧照片
 - (void)leftScroll:(float)offX frame:(CGRect)frame
 {
-    PPLog;
     float tempX = frame.origin.x + offX;
     // 移动当前的图片
     _currentImage.frame = CGRectMake(tempX, frame.origin.y, frame.size.width, frame.size.height);
     // 设置下一张照片
-    _nextImage.image = [self getImageForIndex:self.nextIndex];
+     _fromNetwork ? [self getNetWorkImageIndex:self.nextIndex imageView:self.nextImage] : [self.nextImage setImage:[self getImageForIndex:self.nextIndex]];
+    
     _nextImage.frame = CGRectOffset(_currentImage.frame, kScreenW, 0);
     
     // 收拾停止的时候
     if (_pan.state == UIGestureRecognizerStateEnded)
     {
-        // 回复定时器
+        // 恢复定时器
         [self addTime];
         // 判断手势停止的时候展示哪一个 照片
         MoveDirection result = tempX <= - kScreenW / 2 ? [self leftOut:_currentImage rightIn:_nextImage duration:0.3f] : [self leftIn:_currentImage rightOut:_nextImage duration:0.3f];
@@ -181,13 +204,16 @@ typedef enum : NSUInteger
     // 移动当前的图片
     _currentImage.frame = CGRectMake(tempX, frame.origin.y, frame.size.width, frame.size.height);
     // 设置上一张照片
-    _nextImage.image = [self getImageForIndex:self.previousIndex];
+   // _nextImage.image = [self getImageForIndex:self.previousIndex];
+    
+    _fromNetwork ? [self getNetWorkImageIndex:self.previousIndex imageView:self.nextImage] : [self.nextImage setImage:[self getImageForIndex:self.previousIndex]];
+    
     _nextImage.frame = CGRectOffset(_currentImage.frame, -kScreenW, 0);
     
     // 收拾停止的时候
     if (_pan.state == UIGestureRecognizerStateEnded)
     {
-        // 回复定时器
+        // 恢复定时器
         [self addTime];
         
         // 判断手势停止的时候展示哪一个 照片
@@ -233,6 +259,15 @@ typedef enum : NSUInteger
     return MoveDirectionRight;
 }
 
+
+/**
+ 更新图片数据的方法
+ */
+- (void)changeImageArray:(NSArray *)newArray fromNetWork:(BOOL)fromNetWork
+{
+    self.imageNames = newArray;
+    _fromNetwork = fromNetWork;
+}
 
 
 
